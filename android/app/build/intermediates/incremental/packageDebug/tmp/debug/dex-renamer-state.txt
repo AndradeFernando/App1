@@ -1,4 +1,4 @@
-#Wed Dec 25 15:24:57 BRT 2019
-base.0=/home/fernando/git/App1/android/app/build/intermediates/transforms/dexMerger/debug/0
+#Fri Jan 03 08:57:30 BRT 2020
+base.0=/home/fernando/gitP/App1/android/app/build/intermediates/transforms/dexMerger/debug/0
 path.0=classes.dex
 renamed.0=classes.dex

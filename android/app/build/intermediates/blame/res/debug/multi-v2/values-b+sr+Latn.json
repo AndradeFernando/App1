@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/fernando/git/App1/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-b+sr+Latn/values-b+sr+Latn.xml",
+            "outputFile": "/home/fernando/gitP/App1/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-b+sr+Latn/values-b+sr+Latn.xml",
             "map": [
                 {
                     "source": "/home/fernando/.gradle/caches/transforms-2/files-2.1/1be95a18e2a8f42262ddc4f29f71e372/res/values-b+sr+Latn/values-b+sr+Latn.xml",

@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import {
-  Button,
-  FlatList,
   StyleSheet,
   Text,
   TextInput,
   View,
   Alert,
-} from 'react-native';
-import {connect} from 'react-redux';
-import {Expense} from '../models/Expense';
-import * as ExpenseActions from '../store/expense/actions';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+  TouchableOpacity,
+  ScrollView
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { connect } from "react-redux";
+import { Expense } from "../models/Expense";
+import * as ExpenseActions from "../store/expense/actions";
+import ExpenseListItem from "../components/ExpenseListItem";
+import ExpenseList from "../components/ExpenseList";
 
 interface StateProps {
   listOfExpenses: Expense[];
@@ -24,6 +26,7 @@ interface State {
 
 interface DispatchProps {
   addToList(requestData: Expense): void;
+  removeFromList(requestData: Expense): void;
   getList(): Expense[];
 }
 
@@ -32,54 +35,56 @@ type Props = StateProps & DispatchProps & State;
 class HomeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {expense: '', cost: 0};
+    this.state = { expense: "", cost: 0 };
   }
-
   textInputExpense: TextInput;
   textInputCost: TextInput;
 
+  sayHi = (): void => {
+    Alert.alert("oi");
+  };
+
+  componentDidUpdate = () => {};
+
   clearInput = (): void => {
-    this.textInputExpense.setNativeProps({text: ''});
-    this.textInputCost.setNativeProps({text: ''});
+    this.textInputExpense.setNativeProps({ text: "" });
+    this.textInputCost.setNativeProps({ text: "" });
   };
 
   addToList = (): void => {
-    const {listOfExpenses} = this.props;
-    const {expense, cost} = this.state;
+    const { listOfExpenses } = this.props;
+    const { expense, cost } = this.state;
 
     this.props.addToList({
       id: listOfExpenses.length,
       name: expense,
-      cost: cost,
+      cost: cost
     } as Expense);
 
     this.clearInput();
   };
 
+  removeFromList = (expenseItem: Expense): void => {
+    this.props.removeFromList(expenseItem);
+  };
+
   render(): React.ReactNode {
-    const {listOfExpenses} = this.props;
+    const { listOfExpenses } = this.props;
 
     return (
       <>
         <View>
-          <View style={this.styles.listContainer}>
-            {
-              <FlatList
-                data={listOfExpenses}
-                renderItem={({item}) => (
-                  <Text style={this.styles.listItem}>
-                    {item.name} - {item.cost}
-                  </Text>
-                )}
-              />
-            }
-          </View>
+          <ExpenseList listOfExpenses={listOfExpenses} />
+
+          {listOfExpenses.length > 0 && (
+            <View style={this.styles.horizontalRule} />
+          )}
           <View style={this.styles.expenseFormContainer}>
             <Text style={this.styles.expenseLabel}>EXPENSE</Text>
             <TextInput
               style={this.styles.expenseInput}
               ref={component => (this.textInputExpense = component)}
-              onChangeText={val => this.setState({expense: val})}
+              onChangeText={val => this.setState({ expense: val })}
               placeholder="Type expense here"
             />
 
@@ -87,15 +92,13 @@ class HomeScreen extends React.Component<Props, State> {
             <TextInput
               style={this.styles.expenseInput}
               ref={component => (this.textInputCost = component)}
-              onChangeText={(val: string) => this.setState({cost: Number(val)})}
+              onChangeText={(val: string) =>
+                this.setState({ cost: Number(val) })
+              }
               placeholder="Type cost here"
             />
-            <TouchableOpacity
-              style={this.styles.btn}
-              onPress={() => {
-                Alert.alert('oi');
-              }}>
-              <Text style={this.styles.btnLabel}>Add to the list</Text>
+            <TouchableOpacity style={this.styles.btn} onPress={this.addToList}>
+              <Text style={this.styles.btnLabel}>Add</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -104,58 +107,62 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   styles = StyleSheet.create({
-    listItem: {
-      color: '#3F9B35',
-      fontSize: 20,
-      fontFamily: 'Verdana',
-      borderStyle: 'solid',
-      borderWidth: 1,
-      margin: 6,
-      padding: 5,
-      borderRadius: 5,
+    horizontalRule: {
+      borderBottomColor: "black",
+      borderBottomWidth: 1
     },
+
+    listItem: {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    },
+
     expenseFormContainer: {
-      position: 'relative',
+      position: "relative",
       bottom: 0,
       padding: 20,
-      justifyContent: 'center',
+      justifyContent: "center"
     },
     btnLabel: {
-      fontWeight: 'bold',
+      fontWeight: "bold",
       fontSize: 23,
-      color: '#fff',
+      color: "#fff"
     },
 
     expenseLabel: {
       margin: 5,
       fontSize: 20,
-      fontWeight: 'bold',
+      fontWeight: "bold"
     },
     expenseInput: {
-      borderWidth: 1,
-      borderStyle: 'solid',
-      margin: 5,
+      borderWidth: 0.5,
+      borderStyle: "solid",
+      margin: 1,
+      paddingLeft: 10
     },
     btn: {
+      height: 50,
+      width: 300,
       borderRadius: 5,
-      backgroundColor: '#339CFF',
-      justifyContent: 'center',
-      alignItems: 'center',
-
-      margin: 20,
+      backgroundColor: "#339CFF",
+      justifyContent: "center",
+      alignItems: "center",
+      margin: 20
     },
 
     listContainer: {
       padding: 10,
+      display: "flex",
+      flexDirection: "row"
     },
 
-    expenseFieldContainer: {},
+    expenseFieldContainer: {}
   });
 }
 
 const mapStateToProps = state => {
   return {
-    listOfExpenses: state.expense.expenseList,
+    listOfExpenses: state.expense.expenseList
   };
 };
 
@@ -164,9 +171,12 @@ const mapDispatchToProps = dispatch => {
     addToList: (expense: Expense) => {
       dispatch(ExpenseActions.addToList(expense));
     },
+    removeFromList: (expense: Expense) => {
+      dispatch(ExpenseActions.removeFromList(expense));
+    },
     getList: () => {
       dispatch(ExpenseActions.getList());
-    },
+    }
   };
 };
 
